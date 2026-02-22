@@ -11,6 +11,7 @@ COPY backend/app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/app/ .
+COPY market-data-service/mds_client.py .
 
 RUN mkdir -p /app/data /app/logs
 

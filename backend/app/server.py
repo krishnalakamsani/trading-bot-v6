@@ -641,12 +641,11 @@ async def websocket_endpoint(websocket: WebSocket):
                             # Update the TickEngine — all clients share the same feed.
                             index = str(msg.get('index') or config.get('selected_index', 'NIFTY')).upper()
                             interval = int(msg.get('interval') or config.get('candle_interval', 5) or 5)
-                            try:
-                                from tick_engine import tick_engine
-                                tick_engine.subscribe(index_name=index, candle_interval=interval)
-                                logger.info(f"[WS] Client {client} subscribed to {index}/{interval}s")
-                            except Exception as e:
-                                logger.warning(f"[WS] Subscribe failed: {e}")
+                            await websocket.send_json({
+                               "type": "ack",
+                                "data": {"status": "subscribed", "index": index, "interval": interval}
+                            })
+                            logger.info(f"[WS] Client {client_addr} subscribed to {index}/{interval}s")
                             await websocket.send_json({
                                 "type": "ack",
                                 "status": "subscribed",
